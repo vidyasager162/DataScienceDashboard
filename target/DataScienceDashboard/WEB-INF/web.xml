@@ -1,0 +1,29 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <servlet>
+    <servlet-name>CsvUploadServlet</servlet-name>
+    <servlet-class>com.example.CsvUploadServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>CsvUploadServlet</servlet-name>
+    <url-pattern>/upload</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>DisplayCsvServlet</servlet-name>
+    <servlet-class>com.example.DisplayCsvServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>DisplayCsvServlet</servlet-name>
+    <url-pattern>/displayCsv</url-pattern>
+  </servlet-mapping>
+
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+</web-app>
