@@ -35,7 +35,7 @@
                 accept=".csv"
                 required
               />
-              <button type="submit" class="btn btn-primary btn-block">
+              <button type="submit" class="btn btn-primary">
                 Upload and Start
               </button>
             </div>
