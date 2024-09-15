@@ -10,7 +10,6 @@
       rel="stylesheet"
     />
   </head>
-
   <body>
     <div class="container mt-5">
       <h1 class="text-center mb-4">CSV Data Display</h1>
@@ -19,26 +18,16 @@
         <table class="table table-striped table-bordered">
           <thead class="thead-dark">
             <tr>
-              <!-- Dynamically populate headers -->
-              <c:forEach var="header" items="${headers}">
-                <th>${header}</th>
-              </c:forEach>
+              <th th:each="header : ${headers}" th:text="${header}"></th>
             </tr>
           </thead>
           <tbody>
-            <!-- Dynamically populate rows -->
-            <c:forEach var="row" items="${rows}">
-              <tr>
-                <c:forEach var="cell" items="${row}">
-                  <td>${cell}</td>
-                </c:forEach>
-              </tr>
-            </c:forEach>
+            <tr th:each="row : ${rows}">
+              <td th:each="cell : ${row}" th:text="${cell}"></td>
+            </tr>
           </tbody>
         </table>
       </div>
-
-      <a href="/" class="btn btn-primary mt-4">Back to Upload</a>
     </div>
 
     <!-- Bootstrap JS -->
