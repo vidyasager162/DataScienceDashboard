@@ -17,6 +17,7 @@ public class DisplayCsvServlet extends HttpServlet{
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String filePath = (String) request.getAttribute("filePath");
+        System.out.println(filePath);
 
         List<String> headers = new ArrayList<>();
         List<List<String>> rows = new ArrayList<>();

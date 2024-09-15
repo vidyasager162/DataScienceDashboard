@@ -1,23 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <web-app>
-  <servlet>
-    <servlet-name>CsvUploadServlet</servlet-name>
-    <servlet-class>com.example.CsvUploadServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>CsvUploadServlet</servlet-name>
-    <url-pattern>/uploadCsv</url-pattern>
-  </servlet-mapping>
 
-  <servlet>
-    <servlet-name>DisplayCsvServlet</servlet-name>
-    <servlet-class>com.example.DisplayCsvServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>DisplayCsvServlet</servlet-name>
-    <url-pattern>/displayCsv</url-pattern>
-  </servlet-mapping>
+  <jsp-config>
+    <taglib>
+      <taglib-uri>http://jakarta.apache.org/jsp/jstl/core</taglib-uri>
+      <taglib-location>/WEB-INF/tld/c JSTL-core.tld</taglib-location>
+    </taglib>
+    <taglib>
+      <taglib-uri>http://jakarta.apache.org/jsp/jstl/fmt</taglib-uri>
+      <taglib-location>/WEB-INF/tld/c JSTL-fmt.tld</taglib-location>
+    </taglib>
+  </jsp-config>
 
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
