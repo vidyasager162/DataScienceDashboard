@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>CSV Display</title>
+  </head>
+  <body>
+    <h1>CSV Data</h1>
+    <table border="1">
+      <thead>
+        <tr>
+          <th th:each="header : ${headers}" th:text="${header}">Header</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="row : ${rows}">
+          <td th:each="cell : ${row}" th:text="${cell}">Cell</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

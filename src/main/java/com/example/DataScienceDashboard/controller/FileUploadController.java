@@ -1,0 +1,90 @@
+package com.example.DataScienceDashboard.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+@Controller
+public class FileUploadController {
+    private static final String UPLOADED_FOLDER = "D://temp//";
+
+    @GetMapping("/")
+    public String index() {
+        return "index";
+    }
+
+    @PostMapping("/uploadCsv")
+    public String singleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+        if (file.isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "Please select a CSV file to upload.");
+            return "redirect:/";
+        }
+
+        try {
+            // Save the file to the specified directory
+            File dir = new File(UPLOADED_FOLDER);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            File serverFile = new File(dir.getAbsolutePath() + File.separator + file.getOriginalFilename());
+            file.transferTo(serverFile);
+
+            // Redirect with file path
+            redirectAttributes.addFlashAttribute("filePath", serverFile.getAbsolutePath());
+            return "redirect:/displayCsv";
+        } catch (IOException e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("message", "Failed to upload file.");
+            return "redirect:/";
+        }
+    }
+
+    @GetMapping("/displayCsv")
+    public String displayCsv(Model model) {
+        String filePath = (String) model.asMap().get("filePath");
+
+        List<String> headers = new ArrayList<>();
+        List<List<String>> rows = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            boolean isHeader = true;
+
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+
+                if (isHeader) {
+                    for (String header : values) {
+                        headers.add(header);
+                    }
+                    isHeader = false;
+                } else {
+                    List<String> row = new ArrayList<>();
+                    for (String value : values) {
+                        row.add(value);
+                    }
+                    rows.add(row);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        model.addAttribute("headers", headers);
+        model.addAttribute("rows", rows);
+
+        return "csvDisplay";
+    }
+}
+
