@@ -24,7 +24,7 @@
       </p>
       <div class="row justify-content-center mt-5">
         <div class="col-md-6">
-          <form action="upload" method="post" enctype="multipart/form-data">
+          <form action="uploadCsv" method="post" enctype="multipart/form-data">
             <div class="form-group">
               <label for="file">Upload your CSV file</label>
               <input
