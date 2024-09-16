@@ -1,0 +1,25 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Clean Install",
+      "type": "shell",
+      "command": "mvn clean install",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Spring Boot Run",
+      "type": "shell",
+      "command": "mvn spring-boot:run",
+      "dependsOn": ["Clean Install"],
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Deploy",
+      "dependsOn": ["Clean Install", "Spring Boot Run"],
+      "group": "build"
+    }
+  ]
+}
