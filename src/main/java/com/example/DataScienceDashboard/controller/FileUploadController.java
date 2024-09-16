@@ -67,6 +67,8 @@ public class FileUploadController {
                             row.add(value);
                         }
                         rows.add(row);
+                        // System.out.println(headers);
+                        // System.out.println(rows);
                     }
                 }
             } catch (IOException e) {
