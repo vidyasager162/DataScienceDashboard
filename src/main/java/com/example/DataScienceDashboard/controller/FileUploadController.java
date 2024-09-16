@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -14,7 +15,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class FileUploadController {
@@ -97,6 +101,29 @@ public class FileUploadController {
         model.addAttribute("rows", rows);
 
         return "csvDisplay";
+    }
+
+    @PostMapping("/generateChart")
+    @ResponseBody
+    public Map<String, Object> generateChart(@RequestParam("chartType") String chartType, HttpSession session) {
+        List<String> headers = (List<String>) session.getAttribute("headers");
+        List<List<String>> rows = (List<List<String>>) session.getAttribute("rows");
+
+        if (headers == null || rows == null) {
+            return Map.of("error", "No CSV data found. Please upload a file first.");
+        }
+
+        // Prepare chart data based on chart type
+        // Here, example is given for a simple chart; customize as needed
+        Map<String, Object> chartData = Map.of(
+                "labels", headers, // Assuming headers are used as labels
+                "datasets", List.of(Map.of(
+                        "label", "Data",
+                        "data", rows.stream().flatMap(List::stream).map(Double::parseDouble).collect(Collectors.toList())
+                ))
+        );
+
+        return chartData;
     }
 }
 
