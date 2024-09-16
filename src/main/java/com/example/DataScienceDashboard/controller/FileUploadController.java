@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -17,7 +18,7 @@ import java.util.List;
 
 @Controller
 public class FileUploadController {
-    private static final String UPLOADED_FOLDER = "D://temp//";
+    private static final String UPLOADED_FOLDER = "D://Code//Projects//DataScienceDashboard//src//main//resources//files//";
 
     @GetMapping("/")
     public String index() {
@@ -25,7 +26,7 @@ public class FileUploadController {
     }
 
     @PostMapping("/uploadCsv")
-    public String singleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+    public String singleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes, HttpSession session) {
         if (file.isEmpty()) {
             redirectAttributes.addFlashAttribute("message", "Please select a CSV file to upload.");
             return "redirect:/";
@@ -40,8 +41,39 @@ public class FileUploadController {
             File serverFile = new File(dir.getAbsolutePath() + File.separator + file.getOriginalFilename());
             file.transferTo(serverFile);
 
-            // Redirect with file path
-            redirectAttributes.addFlashAttribute("filePath", serverFile.getAbsolutePath());
+            // Parse the file and store data in the session
+            List<String> headers = new ArrayList<>();
+            List<List<String>> rows = new ArrayList<>();
+
+            try (BufferedReader br = new BufferedReader(new FileReader(serverFile))) {
+                String line;
+                boolean isHeader = true;
+
+                while ((line = br.readLine()) != null) {
+                    String[] values = line.split(",");
+
+                    if (isHeader) {
+                        for (String header : values) {
+                            headers.add(header);
+                        }
+                        isHeader = false;
+                    } else {
+                        List<String> row = new ArrayList<>();
+                        for (String value : values) {
+                            row.add(value);
+                        }
+                        rows.add(row);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // Store headers and rows in the session
+            session.setAttribute("headers", headers);
+            session.setAttribute("rows", rows);
+
+            // Redirect to display page
             return "redirect:/displayCsv";
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,34 +83,14 @@ public class FileUploadController {
     }
 
     @GetMapping("/displayCsv")
-    public String displayCsv(Model model) {
-        String filePath = (String) model.asMap().get("filePath");
+    public String displayCsv(Model model, HttpSession session) {
+        // Retrieve the headers and rows from the session
+        List<String> headers = (List<String>) session.getAttribute("headers");
+        List<List<String>> rows = (List<List<String>>) session.getAttribute("rows");
 
-        List<String> headers = new ArrayList<>();
-        List<List<String>> rows = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            boolean isHeader = true;
-
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(",");
-
-                if (isHeader) {
-                    for (String header : values) {
-                        headers.add(header);
-                    }
-                    isHeader = false;
-                } else {
-                    List<String> row = new ArrayList<>();
-                    for (String value : values) {
-                        row.add(value);
-                    }
-                    rows.add(row);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (headers == null || rows == null) {
+            model.addAttribute("message", "No CSV data found. Please upload a file first.");
+            return "error";
         }
 
         model.addAttribute("headers", headers);
